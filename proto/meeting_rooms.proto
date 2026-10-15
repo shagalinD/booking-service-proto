@@ -1,12 +1,30 @@
 syntax = "proto3";
 
-package meeting_rooms;
+package meeting_rooms.v1;
 
-option go_package = "proto/proto;proto";
+option go_package = "github.com/shagalinD/booking-service-proto/gen/go;proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 service AuthService {
-  rpc Register (RegisterRequest) returns (RegisterResponse);
-  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (AuthResponse);
+  rpc Login(LoginRequest) returns (AuthResponse);
+  rpc RefreshTokens(RefreshTokensRequest) returns (AuthResponse);
+}
+
+service RoomService {
+  // CreateRoom requires the access token of an administrator in authorization metadata.
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse);
+  rpc ListRooms(ListRoomsRequest) returns (ListRoomsResponse);
+  rpc GetRoom(GetRoomRequest) returns (Room);
+}
+
+service BookingService {
+  // Send the caller's access token in authorization metadata as "Bearer <token>".
+  rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
+  // The caller's user ID is derived from the authenticated token, not the request.
+  rpc ListMyBookings(google.protobuf.Empty) returns (ListMyBookingsResponse);
 }
 
 message RegisterRequest {
@@ -16,17 +34,81 @@ message RegisterRequest {
   string last_name = 4;
 }
 
-message RegisterResponse {
-  string access_token = 1;
-  string refresh_token = 2;
-}
-
 message LoginRequest {
   string email = 1;
   string password = 2;
 }
 
-message LoginResponse {
+message RefreshTokensRequest {
+  string refresh_token = 1;
+}
+
+message AuthResponse {
   string access_token = 1;
   string refresh_token = 2;
+}
+
+message Room {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int32 capacity = 4;
+}
+
+message CreateRoomRequest {
+  string name = 1;
+  string description = 2;
+  int32 capacity = 3;
+}
+
+message CreateRoomResponse {
+  string id = 1;
+}
+
+message ListRoomsRequest {
+  // Filters are inclusive; zero is the minimum-capacity default.
+  int32 min_capacity = 1;
+  // The service uses 10000 when max_capacity is zero.
+  int32 max_capacity = 2;
+}
+
+message ListRoomsResponse {
+  repeated Room rooms = 1;
+}
+
+message GetRoomRequest {
+  string room_id = 1;
+}
+
+enum BookingStatus {
+  BOOKING_STATUS_UNSPECIFIED = 0;
+  BOOKING_STATUS_PENDING = 1;
+  BOOKING_STATUS_CONFIRMED = 2;
+  BOOKING_STATUS_CANCELED = 3;
+  BOOKING_STATUS_FINISHED = 4;
+}
+
+message Booking {
+  string id = 1;
+  string title = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+  string user_id = 5;
+  string room_id = 6;
+  BookingStatus status = 7;
+}
+
+message CreateBookingRequest {
+  string title = 1;
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+  string room_id = 4;
+}
+
+message CreateBookingResponse {
+  string booking_id = 1;
+}
+
+message ListMyBookingsResponse {
+  repeated Booking bookings = 1;
 }

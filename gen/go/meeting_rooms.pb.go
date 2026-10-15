@@ -9,6 +9,8 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -20,6 +22,61 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type BookingStatus int32
+
+const (
+	BookingStatus_BOOKING_STATUS_UNSPECIFIED BookingStatus = 0
+	BookingStatus_BOOKING_STATUS_PENDING     BookingStatus = 1
+	BookingStatus_BOOKING_STATUS_CONFIRMED   BookingStatus = 2
+	BookingStatus_BOOKING_STATUS_CANCELED    BookingStatus = 3
+	BookingStatus_BOOKING_STATUS_FINISHED    BookingStatus = 4
+)
+
+// Enum value maps for BookingStatus.
+var (
+	BookingStatus_name = map[int32]string{
+		0: "BOOKING_STATUS_UNSPECIFIED",
+		1: "BOOKING_STATUS_PENDING",
+		2: "BOOKING_STATUS_CONFIRMED",
+		3: "BOOKING_STATUS_CANCELED",
+		4: "BOOKING_STATUS_FINISHED",
+	}
+	BookingStatus_value = map[string]int32{
+		"BOOKING_STATUS_UNSPECIFIED": 0,
+		"BOOKING_STATUS_PENDING":     1,
+		"BOOKING_STATUS_CONFIRMED":   2,
+		"BOOKING_STATUS_CANCELED":    3,
+		"BOOKING_STATUS_FINISHED":    4,
+	}
+)
+
+func (x BookingStatus) Enum() *BookingStatus {
+	p := new(BookingStatus)
+	*p = x
+	return p
+}
+
+func (x BookingStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (BookingStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_meeting_rooms_proto_enumTypes[0].Descriptor()
+}
+
+func (BookingStatus) Type() protoreflect.EnumType {
+	return &file_meeting_rooms_proto_enumTypes[0]
+}
+
+func (x BookingStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use BookingStatus.Descriptor instead.
+func (BookingStatus) EnumDescriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{0}
+}
 
 type RegisterRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -89,58 +146,6 @@ func (x *RegisterRequest) GetLastName() string {
 	return ""
 }
 
-type RegisterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegisterResponse) Reset() {
-	*x = RegisterResponse{}
-	mi := &file_meeting_rooms_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterResponse) ProtoMessage() {}
-
-func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_meeting_rooms_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
-func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_meeting_rooms_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RegisterResponse) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *RegisterResponse) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
 type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -151,7 +156,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_meeting_rooms_proto_msgTypes[2]
+	mi := &file_meeting_rooms_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -163,7 +168,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_meeting_rooms_proto_msgTypes[2]
+	mi := &file_meeting_rooms_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -176,7 +181,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_meeting_rooms_proto_rawDescGZIP(), []int{2}
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *LoginRequest) GetEmail() string {
@@ -193,7 +198,51 @@ func (x *LoginRequest) GetPassword() string {
 	return ""
 }
 
-type LoginResponse struct {
+type RefreshTokensRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RefreshTokensRequest) Reset() {
+	*x = RefreshTokensRequest{}
+	mi := &file_meeting_rooms_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RefreshTokensRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshTokensRequest) ProtoMessage() {}
+
+func (x *RefreshTokensRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RefreshTokensRequest.ProtoReflect.Descriptor instead.
+func (*RefreshTokensRequest) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *RefreshTokensRequest) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+type AuthResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
@@ -201,20 +250,20 @@ type LoginResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoginResponse) Reset() {
-	*x = LoginResponse{}
+func (x *AuthResponse) Reset() {
+	*x = AuthResponse{}
 	mi := &file_meeting_rooms_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoginResponse) String() string {
+func (x *AuthResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoginResponse) ProtoMessage() {}
+func (*AuthResponse) ProtoMessage() {}
 
-func (x *LoginResponse) ProtoReflect() protoreflect.Message {
+func (x *AuthResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_meeting_rooms_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -226,48 +275,662 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
-func (*LoginResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use AuthResponse.ProtoReflect.Descriptor instead.
+func (*AuthResponse) Descriptor() ([]byte, []int) {
 	return file_meeting_rooms_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *LoginResponse) GetAccessToken() string {
+func (x *AuthResponse) GetAccessToken() string {
 	if x != nil {
 		return x.AccessToken
 	}
 	return ""
 }
 
-func (x *LoginResponse) GetRefreshToken() string {
+func (x *AuthResponse) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
 }
 
+type Room struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Capacity      int32                  `protobuf:"varint,4,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Room) Reset() {
+	*x = Room{}
+	mi := &file_meeting_rooms_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Room) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Room) ProtoMessage() {}
+
+func (x *Room) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Room.ProtoReflect.Descriptor instead.
+func (*Room) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Room) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Room) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Room) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Room) GetCapacity() int32 {
+	if x != nil {
+		return x.Capacity
+	}
+	return 0
+}
+
+type CreateRoomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Capacity      int32                  `protobuf:"varint,3,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoomRequest) Reset() {
+	*x = CreateRoomRequest{}
+	mi := &file_meeting_rooms_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomRequest) ProtoMessage() {}
+
+func (x *CreateRoomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoomRequest) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateRoomRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateRoomRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *CreateRoomRequest) GetCapacity() int32 {
+	if x != nil {
+		return x.Capacity
+	}
+	return 0
+}
+
+type CreateRoomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoomResponse) Reset() {
+	*x = CreateRoomResponse{}
+	mi := &file_meeting_rooms_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomResponse) ProtoMessage() {}
+
+func (x *CreateRoomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoomResponse) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CreateRoomResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ListRoomsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Filters are inclusive; zero is the minimum-capacity default.
+	MinCapacity int32 `protobuf:"varint,1,opt,name=min_capacity,json=minCapacity,proto3" json:"min_capacity,omitempty"`
+	// The service uses 10000 when max_capacity is zero.
+	MaxCapacity   int32 `protobuf:"varint,2,opt,name=max_capacity,json=maxCapacity,proto3" json:"max_capacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRoomsRequest) Reset() {
+	*x = ListRoomsRequest{}
+	mi := &file_meeting_rooms_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoomsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoomsRequest) ProtoMessage() {}
+
+func (x *ListRoomsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoomsRequest.ProtoReflect.Descriptor instead.
+func (*ListRoomsRequest) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListRoomsRequest) GetMinCapacity() int32 {
+	if x != nil {
+		return x.MinCapacity
+	}
+	return 0
+}
+
+func (x *ListRoomsRequest) GetMaxCapacity() int32 {
+	if x != nil {
+		return x.MaxCapacity
+	}
+	return 0
+}
+
+type ListRoomsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rooms         []*Room                `protobuf:"bytes,1,rep,name=rooms,proto3" json:"rooms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRoomsResponse) Reset() {
+	*x = ListRoomsResponse{}
+	mi := &file_meeting_rooms_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoomsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoomsResponse) ProtoMessage() {}
+
+func (x *ListRoomsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoomsResponse.ProtoReflect.Descriptor instead.
+func (*ListRoomsResponse) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListRoomsResponse) GetRooms() []*Room {
+	if x != nil {
+		return x.Rooms
+	}
+	return nil
+}
+
+type GetRoomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoomId        string                 `protobuf:"bytes,1,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoomRequest) Reset() {
+	*x = GetRoomRequest{}
+	mi := &file_meeting_rooms_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoomRequest) ProtoMessage() {}
+
+func (x *GetRoomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoomRequest.ProtoReflect.Descriptor instead.
+func (*GetRoomRequest) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetRoomRequest) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
+type Booking struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	StartTime     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	UserId        string                 `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoomId        string                 `protobuf:"bytes,6,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+	Status        BookingStatus          `protobuf:"varint,7,opt,name=status,proto3,enum=meeting_rooms.v1.BookingStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Booking) Reset() {
+	*x = Booking{}
+	mi := &file_meeting_rooms_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Booking) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Booking) ProtoMessage() {}
+
+func (x *Booking) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Booking.ProtoReflect.Descriptor instead.
+func (*Booking) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Booking) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Booking) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Booking) GetStartTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartTime
+	}
+	return nil
+}
+
+func (x *Booking) GetEndTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndTime
+	}
+	return nil
+}
+
+func (x *Booking) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Booking) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
+func (x *Booking) GetStatus() BookingStatus {
+	if x != nil {
+		return x.Status
+	}
+	return BookingStatus_BOOKING_STATUS_UNSPECIFIED
+}
+
+type CreateBookingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	StartTime     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	RoomId        string                 `protobuf:"bytes,4,opt,name=room_id,json=roomId,proto3" json:"room_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBookingRequest) Reset() {
+	*x = CreateBookingRequest{}
+	mi := &file_meeting_rooms_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBookingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBookingRequest) ProtoMessage() {}
+
+func (x *CreateBookingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBookingRequest.ProtoReflect.Descriptor instead.
+func (*CreateBookingRequest) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CreateBookingRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateBookingRequest) GetStartTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartTime
+	}
+	return nil
+}
+
+func (x *CreateBookingRequest) GetEndTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndTime
+	}
+	return nil
+}
+
+func (x *CreateBookingRequest) GetRoomId() string {
+	if x != nil {
+		return x.RoomId
+	}
+	return ""
+}
+
+type CreateBookingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookingId     string                 `protobuf:"bytes,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBookingResponse) Reset() {
+	*x = CreateBookingResponse{}
+	mi := &file_meeting_rooms_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBookingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBookingResponse) ProtoMessage() {}
+
+func (x *CreateBookingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBookingResponse.ProtoReflect.Descriptor instead.
+func (*CreateBookingResponse) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *CreateBookingResponse) GetBookingId() string {
+	if x != nil {
+		return x.BookingId
+	}
+	return ""
+}
+
+type ListMyBookingsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Bookings      []*Booking             `protobuf:"bytes,1,rep,name=bookings,proto3" json:"bookings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyBookingsResponse) Reset() {
+	*x = ListMyBookingsResponse{}
+	mi := &file_meeting_rooms_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyBookingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyBookingsResponse) ProtoMessage() {}
+
+func (x *ListMyBookingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_meeting_rooms_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyBookingsResponse.ProtoReflect.Descriptor instead.
+func (*ListMyBookingsResponse) Descriptor() ([]byte, []int) {
+	return file_meeting_rooms_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ListMyBookingsResponse) GetBookings() []*Booking {
+	if x != nil {
+		return x.Bookings
+	}
+	return nil
+}
+
 var File_meeting_rooms_proto protoreflect.FileDescriptor
 
 const file_meeting_rooms_proto_rawDesc = "" +
 	"\n" +
-	"\x13meeting_rooms.proto\x12\rmeeting_rooms\"\x7f\n" +
+	"\x13meeting_rooms.proto\x12\x10meeting_rooms.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x7f\n" +
 	"\x0fRegisterRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
 	"\n" +
 	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\"Z\n" +
-	"\x10RegisterResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"@\n" +
+	"\tlast_name\x18\x04 \x01(\tR\blastName\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"W\n" +
-	"\rLoginResponse\x12!\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\";\n" +
+	"\x14RefreshTokensRequest\x12#\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"V\n" +
+	"\fAuthResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\x9e\x01\n" +
-	"\vAuthService\x12K\n" +
-	"\bRegister\x12\x1e.meeting_rooms.RegisterRequest\x1a\x1f.meeting_rooms.RegisterResponse\x12B\n" +
-	"\x05Login\x12\x1b.meeting_rooms.LoginRequest\x1a\x1c.meeting_rooms.LoginResponseB\x13Z\x11proto/proto;protob\x06proto3"
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"h\n" +
+	"\x04Room\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
+	"\bcapacity\x18\x04 \x01(\x05R\bcapacity\"e\n" +
+	"\x11CreateRoomRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1a\n" +
+	"\bcapacity\x18\x03 \x01(\x05R\bcapacity\"$\n" +
+	"\x12CreateRoomResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"X\n" +
+	"\x10ListRoomsRequest\x12!\n" +
+	"\fmin_capacity\x18\x01 \x01(\x05R\vminCapacity\x12!\n" +
+	"\fmax_capacity\x18\x02 \x01(\x05R\vmaxCapacity\"A\n" +
+	"\x11ListRoomsResponse\x12,\n" +
+	"\x05rooms\x18\x01 \x03(\v2\x16.meeting_rooms.v1.RoomR\x05rooms\")\n" +
+	"\x0eGetRoomRequest\x12\x17\n" +
+	"\aroom_id\x18\x01 \x01(\tR\x06roomId\"\x8c\x02\n" +
+	"\aBooking\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x129\n" +
+	"\n" +
+	"start_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
+	"\bend_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\tR\x06userId\x12\x17\n" +
+	"\aroom_id\x18\x06 \x01(\tR\x06roomId\x127\n" +
+	"\x06status\x18\a \x01(\x0e2\x1f.meeting_rooms.v1.BookingStatusR\x06status\"\xb7\x01\n" +
+	"\x14CreateBookingRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x129\n" +
+	"\n" +
+	"start_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
+	"\bend_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12\x17\n" +
+	"\aroom_id\x18\x04 \x01(\tR\x06roomId\"6\n" +
+	"\x15CreateBookingResponse\x12\x1d\n" +
+	"\n" +
+	"booking_id\x18\x01 \x01(\tR\tbookingId\"O\n" +
+	"\x16ListMyBookingsResponse\x125\n" +
+	"\bbookings\x18\x01 \x03(\v2\x19.meeting_rooms.v1.BookingR\bbookings*\xa3\x01\n" +
+	"\rBookingStatus\x12\x1e\n" +
+	"\x1aBOOKING_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16BOOKING_STATUS_PENDING\x10\x01\x12\x1c\n" +
+	"\x18BOOKING_STATUS_CONFIRMED\x10\x02\x12\x1b\n" +
+	"\x17BOOKING_STATUS_CANCELED\x10\x03\x12\x1b\n" +
+	"\x17BOOKING_STATUS_FINISHED\x10\x042\xfe\x01\n" +
+	"\vAuthService\x12M\n" +
+	"\bRegister\x12!.meeting_rooms.v1.RegisterRequest\x1a\x1e.meeting_rooms.v1.AuthResponse\x12G\n" +
+	"\x05Login\x12\x1e.meeting_rooms.v1.LoginRequest\x1a\x1e.meeting_rooms.v1.AuthResponse\x12W\n" +
+	"\rRefreshTokens\x12&.meeting_rooms.v1.RefreshTokensRequest\x1a\x1e.meeting_rooms.v1.AuthResponse2\x81\x02\n" +
+	"\vRoomService\x12W\n" +
+	"\n" +
+	"CreateRoom\x12#.meeting_rooms.v1.CreateRoomRequest\x1a$.meeting_rooms.v1.CreateRoomResponse\x12T\n" +
+	"\tListRooms\x12\".meeting_rooms.v1.ListRoomsRequest\x1a#.meeting_rooms.v1.ListRoomsResponse\x12C\n" +
+	"\aGetRoom\x12 .meeting_rooms.v1.GetRoomRequest\x1a\x16.meeting_rooms.v1.Room2\xc6\x01\n" +
+	"\x0eBookingService\x12`\n" +
+	"\rCreateBooking\x12&.meeting_rooms.v1.CreateBookingRequest\x1a'.meeting_rooms.v1.CreateBookingResponse\x12R\n" +
+	"\x0eListMyBookings\x12\x16.google.protobuf.Empty\x1a(.meeting_rooms.v1.ListMyBookingsResponseB9Z7github.com/shagalinD/booking-service-proto/gen/go;protob\x06proto3"
 
 var (
 	file_meeting_rooms_proto_rawDescOnce sync.Once
@@ -281,23 +944,56 @@ func file_meeting_rooms_proto_rawDescGZIP() []byte {
 	return file_meeting_rooms_proto_rawDescData
 }
 
-var file_meeting_rooms_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_meeting_rooms_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_meeting_rooms_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_meeting_rooms_proto_goTypes = []any{
-	(*RegisterRequest)(nil),  // 0: meeting_rooms.RegisterRequest
-	(*RegisterResponse)(nil), // 1: meeting_rooms.RegisterResponse
-	(*LoginRequest)(nil),     // 2: meeting_rooms.LoginRequest
-	(*LoginResponse)(nil),    // 3: meeting_rooms.LoginResponse
+	(BookingStatus)(0),             // 0: meeting_rooms.v1.BookingStatus
+	(*RegisterRequest)(nil),        // 1: meeting_rooms.v1.RegisterRequest
+	(*LoginRequest)(nil),           // 2: meeting_rooms.v1.LoginRequest
+	(*RefreshTokensRequest)(nil),   // 3: meeting_rooms.v1.RefreshTokensRequest
+	(*AuthResponse)(nil),           // 4: meeting_rooms.v1.AuthResponse
+	(*Room)(nil),                   // 5: meeting_rooms.v1.Room
+	(*CreateRoomRequest)(nil),      // 6: meeting_rooms.v1.CreateRoomRequest
+	(*CreateRoomResponse)(nil),     // 7: meeting_rooms.v1.CreateRoomResponse
+	(*ListRoomsRequest)(nil),       // 8: meeting_rooms.v1.ListRoomsRequest
+	(*ListRoomsResponse)(nil),      // 9: meeting_rooms.v1.ListRoomsResponse
+	(*GetRoomRequest)(nil),         // 10: meeting_rooms.v1.GetRoomRequest
+	(*Booking)(nil),                // 11: meeting_rooms.v1.Booking
+	(*CreateBookingRequest)(nil),   // 12: meeting_rooms.v1.CreateBookingRequest
+	(*CreateBookingResponse)(nil),  // 13: meeting_rooms.v1.CreateBookingResponse
+	(*ListMyBookingsResponse)(nil), // 14: meeting_rooms.v1.ListMyBookingsResponse
+	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),          // 16: google.protobuf.Empty
 }
 var file_meeting_rooms_proto_depIdxs = []int32{
-	0, // 0: meeting_rooms.AuthService.Register:input_type -> meeting_rooms.RegisterRequest
-	2, // 1: meeting_rooms.AuthService.Login:input_type -> meeting_rooms.LoginRequest
-	1, // 2: meeting_rooms.AuthService.Register:output_type -> meeting_rooms.RegisterResponse
-	3, // 3: meeting_rooms.AuthService.Login:output_type -> meeting_rooms.LoginResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	5,  // 0: meeting_rooms.v1.ListRoomsResponse.rooms:type_name -> meeting_rooms.v1.Room
+	15, // 1: meeting_rooms.v1.Booking.start_time:type_name -> google.protobuf.Timestamp
+	15, // 2: meeting_rooms.v1.Booking.end_time:type_name -> google.protobuf.Timestamp
+	0,  // 3: meeting_rooms.v1.Booking.status:type_name -> meeting_rooms.v1.BookingStatus
+	15, // 4: meeting_rooms.v1.CreateBookingRequest.start_time:type_name -> google.protobuf.Timestamp
+	15, // 5: meeting_rooms.v1.CreateBookingRequest.end_time:type_name -> google.protobuf.Timestamp
+	11, // 6: meeting_rooms.v1.ListMyBookingsResponse.bookings:type_name -> meeting_rooms.v1.Booking
+	1,  // 7: meeting_rooms.v1.AuthService.Register:input_type -> meeting_rooms.v1.RegisterRequest
+	2,  // 8: meeting_rooms.v1.AuthService.Login:input_type -> meeting_rooms.v1.LoginRequest
+	3,  // 9: meeting_rooms.v1.AuthService.RefreshTokens:input_type -> meeting_rooms.v1.RefreshTokensRequest
+	6,  // 10: meeting_rooms.v1.RoomService.CreateRoom:input_type -> meeting_rooms.v1.CreateRoomRequest
+	8,  // 11: meeting_rooms.v1.RoomService.ListRooms:input_type -> meeting_rooms.v1.ListRoomsRequest
+	10, // 12: meeting_rooms.v1.RoomService.GetRoom:input_type -> meeting_rooms.v1.GetRoomRequest
+	12, // 13: meeting_rooms.v1.BookingService.CreateBooking:input_type -> meeting_rooms.v1.CreateBookingRequest
+	16, // 14: meeting_rooms.v1.BookingService.ListMyBookings:input_type -> google.protobuf.Empty
+	4,  // 15: meeting_rooms.v1.AuthService.Register:output_type -> meeting_rooms.v1.AuthResponse
+	4,  // 16: meeting_rooms.v1.AuthService.Login:output_type -> meeting_rooms.v1.AuthResponse
+	4,  // 17: meeting_rooms.v1.AuthService.RefreshTokens:output_type -> meeting_rooms.v1.AuthResponse
+	7,  // 18: meeting_rooms.v1.RoomService.CreateRoom:output_type -> meeting_rooms.v1.CreateRoomResponse
+	9,  // 19: meeting_rooms.v1.RoomService.ListRooms:output_type -> meeting_rooms.v1.ListRoomsResponse
+	5,  // 20: meeting_rooms.v1.RoomService.GetRoom:output_type -> meeting_rooms.v1.Room
+	13, // 21: meeting_rooms.v1.BookingService.CreateBooking:output_type -> meeting_rooms.v1.CreateBookingResponse
+	14, // 22: meeting_rooms.v1.BookingService.ListMyBookings:output_type -> meeting_rooms.v1.ListMyBookingsResponse
+	15, // [15:23] is the sub-list for method output_type
+	7,  // [7:15] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_meeting_rooms_proto_init() }
@@ -310,13 +1006,14 @@ func file_meeting_rooms_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_meeting_rooms_proto_rawDesc), len(file_meeting_rooms_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   4,
+			NumEnums:      1,
+			NumMessages:   14,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   3,
 		},
 		GoTypes:           file_meeting_rooms_proto_goTypes,
 		DependencyIndexes: file_meeting_rooms_proto_depIdxs,
+		EnumInfos:         file_meeting_rooms_proto_enumTypes,
 		MessageInfos:      file_meeting_rooms_proto_msgTypes,
 	}.Build()
 	File_meeting_rooms_proto = out.File
